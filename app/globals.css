@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Playfair+Display:ital,wght@1,400;1,700;1,900&family=Cairo:wght@300;400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-pink: #FF69B4;
+  --color-brand-hotpink: #FF1493;
+  --color-brand-darkred: #C2185B;
+  --color-brand-pinkishwhite: #FFD1DC;
+  --color-brand-rose: #F8BBD0;
+  --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
+  --font-arabic: "Cairo", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Arabic font support */
+:lang(ar) {
+  font-family: "Cairo", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+:lang(ar) h1,
+:lang(ar) h2,
+:lang(ar) h3,
+:lang(ar) h4 {
+  font-family: "Cairo", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+/* RTL specific fixes */
+[dir="rtl"] .tracking-widest,
+[dir="rtl"] .tracking-wider,
+[dir="rtl"] .tracking-tight {
+  letter-spacing: 0 !important;
+}
+
+[dir="rtl"] .uppercase {
+  text-transform: none;
+}
+
+/* Keep English text uppercase/tracked in RTL mode for Latin text */
+[dir="rtl"] .en-text {
+  font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  15% { transform: translateX(-6px) rotate(-8deg); }
+  30% { transform: translateX(6px) rotate(8deg); }
+  45% { transform: translateX(-5px) rotate(-5deg); }
+  60% { transform: translateX(5px) rotate(5deg); }
+  75% { transform: translateX(-3px) rotate(-3deg); }
+  90% { transform: translateX(3px) rotate(3deg); }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fly-to-cart {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.5) translateY(-30px); opacity: 0.7; }
+  100% { transform: scale(0); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(194, 24, 91, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(194, 24, 91, 0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@utility animate-shake {
+  animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@utility animate-bounce-in {
+  animation: bounce-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@utility animate-fly-to-cart {
+  animation: fly-to-cart 0.6s cubic-bezier(0.55, 0.055, 0.675, 0.19) both;
+}
+
+@utility animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@utility animate-pulse-glow {
+  animation: pulse-glow 2s infinite;
+}
+
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Premium gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #C2185B 0%, #FF1493 50%, #FF69B4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Premium card hover */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(194, 24, 91, 0.15);
+}

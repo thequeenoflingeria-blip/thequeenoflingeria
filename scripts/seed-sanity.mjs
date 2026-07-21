@@ -1,0 +1,194 @@
+import { createClient } from '@sanity/client'
+
+const client = createClient({
+  projectId: 'vjerk6i1',
+  dataset: 'production',
+  apiVersion: '2024-01-01',
+  token: 'skUoMjTsTVPVso0s3QxvKVnmsLkxI20L3CPgNmdzhPk2azQK6kGnicQVvZeBNq2Ca6P27Caj0Z4KC9ZzUa51DLxweihIh6PDfWTuDP1GujpW3fCAaRDi7vDQghko0xzqQRBStDWc4IVN4ASWnIc92xowjeg9Ul3f3c4TPzpKD3DJKPJVKBAS',
+  useCdn: false,
+})
+
+// --- CATEGORIES ---
+const categories = [
+  { _id: 'cat-lingerie', _type: 'category', title: 'Lingerie', titleAr: 'لانجري', slug: { _type: 'slug', current: 'lingerie' }, order: 1 },
+  { _id: 'cat-summer', _type: 'category', title: 'Summer', titleAr: 'صيفي', slug: { _type: 'slug', current: 'summer' }, order: 2 },
+  { _id: 'cat-dresses', _type: 'category', title: 'Dresses', titleAr: 'فساتين', slug: { _type: 'slug', current: 'dresses' }, order: 3 },
+  { _id: 'cat-accessories', _type: 'category', title: 'Accessories', titleAr: 'إكسسوارات', slug: { _type: 'slug', current: 'accessories' }, order: 4 },
+  { _id: 'cat-pajamas', _type: 'category', title: 'Pajamas', titleAr: 'بيجامات', slug: { _type: 'slug', current: 'pajamas' }, order: 5 },
+  { _id: 'cat-sports', _type: 'category', title: 'Sports', titleAr: 'رياضي', slug: { _type: 'slug', current: 'sports' }, order: 6 },
+  { _id: 'cat-beauty', _type: 'category', title: 'Beauty', titleAr: 'تجميل', slug: { _type: 'slug', current: 'beauty' }, order: 7 },
+  { _id: 'cat-sale', _type: 'category', title: 'Sale', titleAr: 'تخفيضات', slug: { _type: 'slug', current: 'sale' }, order: 8 },
+]
+
+// --- PRODUCTS ---
+const products = [
+  {
+    _id: 'prod-1', _type: 'product',
+    name: 'طقم لانجري الوردي', nameEn: 'Pink Lace Lingerie Set',
+    slug: { _type: 'slug', current: 'pink-lace-lingerie-set' },
+    category: { _type: 'reference', _ref: 'cat-lingerie' },
+    price: 3500, originalPrice: 4800,
+    description: 'طقم لانجري فاخر من الدانتيل الوردي الناعم، تصميم أنيق ومريح للبشرة.',
+    sizes: ['XS', 'S', 'M', 'L', 'XL'],
+    colors: [{ _key: 'c1', name: 'وردي فاتح', hex: '#FFB6C1' }, { _key: 'c2', name: 'أبيض', hex: '#FFFFFF' }],
+    isFeatured: true, isNewArrival: false, isOnSale: true, stock: 25,
+  },
+  {
+    _id: 'prod-2', _type: 'product',
+    name: 'فستان صيفي زهري', nameEn: 'Floral Summer Dress',
+    slug: { _type: 'slug', current: 'floral-summer-dress' },
+    category: { _type: 'reference', _ref: 'cat-dresses' },
+    price: 4200, originalPrice: 5500,
+    description: 'فستان صيفي خفيف بنقشة الزهور، مثالي للإطلالات العصرية.',
+    sizes: ['S', 'M', 'L', 'XL'],
+    colors: [{ _key: 'c1', name: 'وردي', hex: '#FF69B4' }, { _key: 'c2', name: 'أخضر', hex: '#90EE90' }],
+    isFeatured: true, isNewArrival: true, isOnSale: false, stock: 18,
+  },
+  {
+    _id: 'prod-3', _type: 'product',
+    name: 'بيجامة ساتان حريرية', nameEn: 'Satin Silk Pajama',
+    slug: { _type: 'slug', current: 'satin-silk-pajama' },
+    category: { _type: 'reference', _ref: 'cat-pajamas' },
+    price: 5800, originalPrice: 7000,
+    description: 'بيجامة من الساتان الحريري الفاخر، تمنحك راحة استثنائية طوال الليل.',
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    colors: [{ _key: 'c1', name: 'ذهبي', hex: '#FFD700' }, { _key: 'c2', name: 'أسود', hex: '#000000' }, { _key: 'c3', name: 'أحمر', hex: '#DC143C' }],
+    isFeatured: true, isNewArrival: true, isOnSale: false, stock: 12,
+  },
+  {
+    _id: 'prod-4', _type: 'product',
+    name: 'طقم رياضي نسائي', nameEn: 'Women Sports Set',
+    slug: { _type: 'slug', current: 'women-sports-set' },
+    category: { _type: 'reference', _ref: 'cat-sports' },
+    price: 3200, originalPrice: 4000,
+    description: 'طقم رياضي نسائي مريح ومرن، مثالي لليوغا والرياضة اليومية.',
+    sizes: ['XS', 'S', 'M', 'L'],
+    colors: [{ _key: 'c1', name: 'وردي فوشيا', hex: '#FF1493' }, { _key: 'c2', name: 'رمادي', hex: '#808080' }],
+    isFeatured: false, isNewArrival: true, isOnSale: false, stock: 30,
+  },
+  {
+    _id: 'prod-5', _type: 'product',
+    name: 'فستان سهرة أنيق', nameEn: 'Elegant Evening Dress',
+    slug: { _type: 'slug', current: 'elegant-evening-dress' },
+    category: { _type: 'reference', _ref: 'cat-dresses' },
+    price: 8500, originalPrice: 12000,
+    description: 'فستان سهرة فاخر مطرز بالترتر، مثالي للمناسبات الخاصة.',
+    sizes: ['XS', 'S', 'M', 'L', 'XL'],
+    colors: [{ _key: 'c1', name: 'أحمر', hex: '#DC143C' }, { _key: 'c2', name: 'أسود', hex: '#000000' }, { _key: 'c3', name: 'ذهبي', hex: '#FFD700' }],
+    isFeatured: true, isNewArrival: false, isOnSale: true, stock: 8,
+  },
+  {
+    _id: 'prod-6', _type: 'product',
+    name: 'بلوزة صيفية شيفون', nameEn: 'Chiffon Summer Blouse',
+    slug: { _type: 'slug', current: 'chiffon-summer-blouse' },
+    category: { _type: 'reference', _ref: 'cat-summer' },
+    price: 1800, originalPrice: 2400,
+    description: 'بلوزة من الشيفون الخفيف، تصميم أنيق يناسب جميع المناسبات الصيفية.',
+    sizes: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
+    colors: [{ _key: 'c1', name: 'أبيض', hex: '#FFFFFF' }, { _key: 'c2', name: 'وردي', hex: '#FFC0CB' }, { _key: 'c3', name: 'أزرق', hex: '#87CEEB' }],
+    isFeatured: false, isNewArrival: false, isOnSale: true, stock: 40,
+  },
+  {
+    _id: 'prod-7', _type: 'product',
+    name: 'حذاء كعب عالي وردي', nameEn: 'Pink High Heel',
+    slug: { _type: 'slug', current: 'pink-high-heel' },
+    category: { _type: 'reference', _ref: 'cat-accessories' },
+    price: 4500, originalPrice: 5500,
+    description: 'حذاء كعب عالي أنيق، يضيف لمسة من الأناقة لأي إطلالة.',
+    sizes: ['36', '37', '38', '39', '40', '41'],
+    colors: [{ _key: 'c1', name: 'وردي', hex: '#FF69B4' }, { _key: 'c2', name: 'أسود', hex: '#000000' }, { _key: 'c3', name: 'بيج', hex: '#F5F5DC' }],
+    isFeatured: false, isNewArrival: true, isOnSale: false, stock: 20,
+  },
+  {
+    _id: 'prod-8', _type: 'product',
+    name: 'عطر الوردة الفرنسية', nameEn: 'French Rose Perfume',
+    slug: { _type: 'slug', current: 'french-rose-perfume' },
+    category: { _type: 'reference', _ref: 'cat-beauty' },
+    price: 2800, originalPrice: 3500,
+    description: 'عطر نسائي فرنسي برائحة الورود الناعمة، يدوم طويلاً ويمنحك إحساساً بالتألق.',
+    sizes: ['50ml', '100ml'],
+    colors: [],
+    isFeatured: false, isNewArrival: false, isOnSale: true, stock: 15,
+  },
+]
+
+// --- SHIPPING ZONES ---
+const shippingZones = [
+  { _id: 'ship-1', _type: 'shippingZone', wilaya: 'أدرار', wilayaCode: 1, homeDeliveryPrice: 1200, officeDeliveryPrice: 700, estimatedDays: '5-7 أيام', isAvailable: true },
+  { _id: 'ship-2', _type: 'shippingZone', wilaya: 'الشلف', wilayaCode: 2, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-3', _type: 'shippingZone', wilaya: 'الأغواط', wilayaCode: 3, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-4', _type: 'shippingZone', wilaya: 'أم البواقي', wilayaCode: 4, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-5', _type: 'shippingZone', wilaya: 'باتنة', wilayaCode: 5, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-6', _type: 'shippingZone', wilaya: 'بجاية', wilayaCode: 6, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-7', _type: 'shippingZone', wilaya: 'بسكرة', wilayaCode: 7, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-8', _type: 'shippingZone', wilaya: 'بشار', wilayaCode: 8, homeDeliveryPrice: 1200, officeDeliveryPrice: 700, estimatedDays: '5-7 أيام', isAvailable: true },
+  { _id: 'ship-9', _type: 'shippingZone', wilaya: 'البليدة', wilayaCode: 9, homeDeliveryPrice: 700, officeDeliveryPrice: 400, estimatedDays: '2-3 أيام', isAvailable: true },
+  { _id: 'ship-10', _type: 'shippingZone', wilaya: 'البويرة', wilayaCode: 10, homeDeliveryPrice: 800, officeDeliveryPrice: 450, estimatedDays: '2-4 أيام', isAvailable: true },
+  { _id: 'ship-11', _type: 'shippingZone', wilaya: 'تمنراست', wilayaCode: 11, homeDeliveryPrice: 1500, officeDeliveryPrice: 900, estimatedDays: '7-10 أيام', isAvailable: true },
+  { _id: 'ship-12', _type: 'shippingZone', wilaya: 'تبسة', wilayaCode: 12, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-13', _type: 'shippingZone', wilaya: 'تلمسان', wilayaCode: 13, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-14', _type: 'shippingZone', wilaya: 'تيارت', wilayaCode: 14, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-15', _type: 'shippingZone', wilaya: 'تيزي وزو', wilayaCode: 15, homeDeliveryPrice: 800, officeDeliveryPrice: 450, estimatedDays: '2-4 أيام', isAvailable: true },
+  { _id: 'ship-16', _type: 'shippingZone', wilaya: 'الجزائر', wilayaCode: 16, homeDeliveryPrice: 600, officeDeliveryPrice: 350, estimatedDays: '1-2 أيام', isAvailable: true },
+  { _id: 'ship-17', _type: 'shippingZone', wilaya: 'الجلفة', wilayaCode: 17, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-18', _type: 'shippingZone', wilaya: 'جيجل', wilayaCode: 18, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-19', _type: 'shippingZone', wilaya: 'سطيف', wilayaCode: 19, homeDeliveryPrice: 800, officeDeliveryPrice: 450, estimatedDays: '2-4 أيام', isAvailable: true },
+  { _id: 'ship-20', _type: 'shippingZone', wilaya: 'سعيدة', wilayaCode: 20, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-21', _type: 'shippingZone', wilaya: 'سكيكدة', wilayaCode: 21, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-22', _type: 'shippingZone', wilaya: 'سيدي بلعباس', wilayaCode: 22, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-23', _type: 'shippingZone', wilaya: 'عنابة', wilayaCode: 23, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-24', _type: 'shippingZone', wilaya: 'قالمة', wilayaCode: 24, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-25', _type: 'shippingZone', wilaya: 'قسنطينة', wilayaCode: 25, homeDeliveryPrice: 800, officeDeliveryPrice: 450, estimatedDays: '2-4 أيام', isAvailable: true },
+  { _id: 'ship-26', _type: 'shippingZone', wilaya: 'المدية', wilayaCode: 26, homeDeliveryPrice: 800, officeDeliveryPrice: 450, estimatedDays: '2-4 أيام', isAvailable: true },
+  { _id: 'ship-27', _type: 'shippingZone', wilaya: 'مستغانم', wilayaCode: 27, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-28', _type: 'shippingZone', wilaya: 'المسيلة', wilayaCode: 28, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-29', _type: 'shippingZone', wilaya: 'معسكر', wilayaCode: 29, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-30', _type: 'shippingZone', wilaya: 'ورقلة', wilayaCode: 30, homeDeliveryPrice: 1200, officeDeliveryPrice: 700, estimatedDays: '5-7 أيام', isAvailable: true },
+  { _id: 'ship-31', _type: 'shippingZone', wilaya: 'وهران', wilayaCode: 31, homeDeliveryPrice: 700, officeDeliveryPrice: 400, estimatedDays: '2-3 أيام', isAvailable: true },
+  { _id: 'ship-32', _type: 'shippingZone', wilaya: 'البيض', wilayaCode: 32, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-33', _type: 'shippingZone', wilaya: 'إليزي', wilayaCode: 33, homeDeliveryPrice: 1800, officeDeliveryPrice: 1200, estimatedDays: '7-10 أيام', isAvailable: true },
+  { _id: 'ship-34', _type: 'shippingZone', wilaya: 'برج بوعريريج', wilayaCode: 34, homeDeliveryPrice: 800, officeDeliveryPrice: 450, estimatedDays: '2-4 أيام', isAvailable: true },
+  { _id: 'ship-35', _type: 'shippingZone', wilaya: 'بومرداس', wilayaCode: 35, homeDeliveryPrice: 700, officeDeliveryPrice: 400, estimatedDays: '2-3 أيام', isAvailable: true },
+  { _id: 'ship-36', _type: 'shippingZone', wilaya: 'الطارف', wilayaCode: 36, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-37', _type: 'shippingZone', wilaya: 'تندوف', wilayaCode: 37, homeDeliveryPrice: 2000, officeDeliveryPrice: 1400, estimatedDays: '10-14 يوم', isAvailable: true },
+  { _id: 'ship-38', _type: 'shippingZone', wilaya: 'تيسمسيلت', wilayaCode: 38, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-39', _type: 'shippingZone', wilaya: 'الوادي', wilayaCode: 39, homeDeliveryPrice: 1200, officeDeliveryPrice: 700, estimatedDays: '5-7 أيام', isAvailable: true },
+  { _id: 'ship-40', _type: 'shippingZone', wilaya: 'خنشلة', wilayaCode: 40, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-41', _type: 'shippingZone', wilaya: 'سوق أهراس', wilayaCode: 41, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-42', _type: 'shippingZone', wilaya: 'تيبازة', wilayaCode: 42, homeDeliveryPrice: 700, officeDeliveryPrice: 400, estimatedDays: '2-3 أيام', isAvailable: true },
+  { _id: 'ship-43', _type: 'shippingZone', wilaya: 'ميلة', wilayaCode: 43, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-44', _type: 'shippingZone', wilaya: 'عين الدفلى', wilayaCode: 44, homeDeliveryPrice: 800, officeDeliveryPrice: 450, estimatedDays: '2-4 أيام', isAvailable: true },
+  { _id: 'ship-45', _type: 'shippingZone', wilaya: 'النعامة', wilayaCode: 45, homeDeliveryPrice: 1100, officeDeliveryPrice: 650, estimatedDays: '5-7 أيام', isAvailable: true },
+  { _id: 'ship-46', _type: 'shippingZone', wilaya: 'عين تموشنت', wilayaCode: 46, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-47', _type: 'shippingZone', wilaya: 'غرداية', wilayaCode: 47, homeDeliveryPrice: 1100, officeDeliveryPrice: 650, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-48', _type: 'shippingZone', wilaya: 'غليزان', wilayaCode: 48, homeDeliveryPrice: 900, officeDeliveryPrice: 500, estimatedDays: '3-5 أيام', isAvailable: true },
+  { _id: 'ship-49', _type: 'shippingZone', wilaya: 'المغير', wilayaCode: 49, homeDeliveryPrice: 1200, officeDeliveryPrice: 700, estimatedDays: '5-7 أيام', isAvailable: true },
+  { _id: 'ship-50', _type: 'shippingZone', wilaya: 'المنيعة', wilayaCode: 50, homeDeliveryPrice: 1300, officeDeliveryPrice: 800, estimatedDays: '6-8 أيام', isAvailable: true },
+  { _id: 'ship-51', _type: 'shippingZone', wilaya: 'أولاد جلال', wilayaCode: 51, homeDeliveryPrice: 1000, officeDeliveryPrice: 600, estimatedDays: '4-6 أيام', isAvailable: true },
+  { _id: 'ship-52', _type: 'shippingZone', wilaya: 'برج باجي مختار', wilayaCode: 52, homeDeliveryPrice: 2000, officeDeliveryPrice: 1400, estimatedDays: '10-14 يوم', isAvailable: true },
+  { _id: 'ship-53', _type: 'shippingZone', wilaya: 'بني عباس', wilayaCode: 53, homeDeliveryPrice: 1400, officeDeliveryPrice: 900, estimatedDays: '6-8 أيام', isAvailable: true },
+  { _id: 'ship-54', _type: 'shippingZone', wilaya: 'عين صالح', wilayaCode: 54, homeDeliveryPrice: 1600, officeDeliveryPrice: 1000, estimatedDays: '7-10 أيام', isAvailable: true },
+  { _id: 'ship-55', _type: 'shippingZone', wilaya: 'عين قزام', wilayaCode: 55, homeDeliveryPrice: 2000, officeDeliveryPrice: 1400, estimatedDays: '10-14 يوم', isAvailable: true },
+  { _id: 'ship-56', _type: 'shippingZone', wilaya: 'توقرت', wilayaCode: 56, homeDeliveryPrice: 1200, officeDeliveryPrice: 700, estimatedDays: '5-7 أيام', isAvailable: true },
+  { _id: 'ship-57', _type: 'shippingZone', wilaya: 'جانت', wilayaCode: 57, homeDeliveryPrice: 1800, officeDeliveryPrice: 1200, estimatedDays: '8-12 يوم', isAvailable: true },
+  { _id: 'ship-58', _type: 'shippingZone', wilaya: 'تيميمون', wilayaCode: 58, homeDeliveryPrice: 1300, officeDeliveryPrice: 800, estimatedDays: '6-8 أيام', isAvailable: true },
+]
+
+async function seed() {
+  const allDocs = [...categories, ...products, ...shippingZones]
+  
+  console.log(`🚀 Seeding ${allDocs.length} documents to Sanity...`)
+  
+  for (const doc of allDocs) {
+    try {
+      await client.createOrReplace(doc)
+      console.log(`  ✅ ${doc._type}: ${doc._id}`)
+    } catch (err) {
+      console.error(`  ❌ ${doc._type}: ${doc._id} - ${err.message}`)
+    }
+  }
+  
+  console.log('\n🎉 Seeding complete!')
+}
+
+seed()

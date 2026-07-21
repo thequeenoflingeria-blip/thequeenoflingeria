@@ -1,0 +1,13 @@
+{
+  "nav": {
+    "home": "Home",
+    "shop": "Shop",
+    "collections": "Collections",
+    "about": "Our Story"
+  },
+  "hero": {
+    "tagline": "Discover exceptional beauty, uncompromising comfort, and unforgettable luxury in every detail.",
+    "subtitle": "Designed exclusively for the modern woman",
+    "cta": "Shop New Collection"
+  }
+}
