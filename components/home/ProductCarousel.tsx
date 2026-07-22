@@ -86,7 +86,7 @@ export default function ProductCarousel({
               show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
             }}
             key={`${product.id}-${idx}`} 
-            className="w-[46vw] min-w-[46vw] sm:w-[40vw] sm:min-w-[40vw] md:w-[30vw] md:min-w-[30vw] lg:w-[22vw] lg:min-w-[22vw] flex-shrink-0 snap-start group relative flex flex-col"
+            className="w-[38vw] min-w-[38vw] sm:w-[32vw] sm:min-w-[32vw] md:w-[26vw] md:min-w-[26vw] lg:w-[20vw] lg:min-w-[20vw] flex-shrink-0 snap-start group relative flex flex-col"
           >
             <Link 
               href="/shop"
