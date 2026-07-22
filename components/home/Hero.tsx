@@ -39,7 +39,7 @@ export default function Hero() {
 
   return (
     <>
-      <div className="relative w-full h-[60vh] sm:h-[75vh] lg:h-[85vh] bg-brand-pinkishwhite overflow-hidden group">
+      <div className="relative w-full h-[45vh] sm:h-[60vh] lg:h-[85vh] bg-brand-pinkishwhite overflow-hidden group">
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
