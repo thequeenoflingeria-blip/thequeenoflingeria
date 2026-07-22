@@ -1,12 +1,12 @@
 'use client';
 
 import { useLocale } from 'next-intl';
-import { useRouter, Link } from '@/lib/i18n/routing';
+import { useRouter } from '@/lib/i18n/routing';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, MapPin, Package, Truck, CheckCircle2, Store, HeartHandshake, PartyPopper, Trash2, Plus, Minus } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Package, Truck, CheckCircle2, Store, HeartHandshake, PartyPopper, Trash2, Plus, Minus, AlertCircle, Sparkles, Heart, Star } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 import { products } from '@/lib/data';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import confetti from 'canvas-confetti';
 
 const algerianWilayas = [
@@ -29,17 +29,36 @@ export default function CheckoutPage() {
   const [deliveryType, setDeliveryType] = useState<'desk' | 'home'>('home');
   const [isSuccess, setIsSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // If cart is empty and not in success state, might want to redirect, but we let user see it anyway or we can disable submit.
+  // Form state
+  const [form, setForm] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    wilaya: '',
+    address: '',
+  });
 
-  const shipping = deliveryType === 'home' ? 800 : 500; // Example DZD shipping cost
-  const total = cartTotal + (cartCount > 0 ? shipping : 0);
+  const shipping = deliveryType === 'home' ? 800 : 500;
 
-  const inputClass = `w-full bg-white border border-gray-200 rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-hotpink focus:ring-2 focus:ring-brand-hotpink/10 transition-all font-medium text-gray-800 text-sm placeholder:text-gray-300 ${isRTL ? 'text-right' : 'text-left'}`;
+  const inputClass = (field: string) => `w-full bg-white border ${errors[field] ? 'border-red-400 ring-2 ring-red-100' : 'border-gray-200'} rounded-xl px-4 py-3.5 focus:outline-none focus:border-brand-hotpink focus:ring-2 focus:ring-brand-hotpink/10 transition-all font-medium text-gray-800 text-sm placeholder:text-gray-400 ${isRTL ? 'text-right' : 'text-left'}`;
+
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!form.firstName.trim()) newErrors.firstName = isRTL ? 'مطلوب' : 'Required';
+    if (!form.lastName.trim()) newErrors.lastName = isRTL ? 'مطلوب' : 'Required';
+    if (!form.phone.trim() || form.phone.length < 9) newErrors.phone = isRTL ? 'رقم غير صحيح' : 'Invalid number';
+    if (!form.wilaya) newErrors.wilaya = isRTL ? 'اختر الولاية' : 'Select province';
+    if (!form.address.trim()) newErrors.address = isRTL ? 'مطلوب' : 'Required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = () => {
+    if (!validate()) return;
+    if (cartCount === 0) return;
     setIsSubmitting(true);
-    // Simulate API call
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
@@ -49,356 +68,472 @@ export default function CheckoutPage() {
   };
 
   const fireConfetti = () => {
-    const duration = 3 * 1000;
+    const duration = 4 * 1000;
     const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const colors = ['#ff4081', '#c62828', '#ff80ab', '#ffffff', '#f8bbd0'];
 
-    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
-
-    const interval: any = setInterval(function() {
+    const interval: any = setInterval(() => {
       const timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) return clearInterval(interval);
 
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-      confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-    }, 250);
+      const particleCount = 60 * (timeLeft / duration);
+      confetti({
+        particleCount,
+        spread: 120,
+        colors,
+        origin: { x: Math.random() * 0.3, y: Math.random() - 0.2 },
+        startVelocity: 40,
+        gravity: 0.8,
+        shapes: ['circle', 'square'],
+      });
+      confetti({
+        particleCount,
+        spread: 120,
+        colors,
+        origin: { x: 0.7 + Math.random() * 0.3, y: Math.random() - 0.2 },
+        startVelocity: 40,
+        gravity: 0.8,
+        shapes: ['circle', 'square'],
+      });
+    }, 200);
   };
 
+  // ─── SUCCESS SCREEN ────────────────────────────────────────────────
   if (isSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-brand-pinkishwhite/30 via-white to-white flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Animated background elements */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0 }} 
-          animate={{ opacity: 1, scale: 1 }} 
-          transition={{ duration: 1, type: 'spring' }}
-          className="absolute -top-32 -left-32 w-96 h-96 bg-brand-pink/20 rounded-full blur-3xl pointer-events-none"
-        />
-        <motion.div 
-          initial={{ opacity: 0, scale: 0 }} 
-          animate={{ opacity: 1, scale: 1 }} 
-          transition={{ duration: 1, type: 'spring', delay: 0.2 }}
-          className="absolute -bottom-32 -right-32 w-96 h-96 bg-brand-hotpink/10 rounded-full blur-3xl pointer-events-none"
-        />
+      <div className="min-h-screen bg-gradient-to-br from-[#fff0f5] via-white to-[#fff8f9] flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Floating background shapes */}
+        {[...Array(8)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0, rotate: 0 }}
+            animate={{ opacity: [0, 0.15, 0.1], scale: [0, 1.2, 1], rotate: [0, 180, 360] }}
+            transition={{ delay: i * 0.15, duration: 1.5, ease: 'easeOut' }}
+            className="absolute rounded-full bg-brand-hotpink pointer-events-none"
+            style={{
+              width: `${60 + i * 20}px`,
+              height: `${60 + i * 20}px`,
+              top: `${10 + i * 10}%`,
+              left: i % 2 === 0 ? `${5 + i * 8}%` : undefined,
+              right: i % 2 !== 0 ? `${5 + i * 8}%` : undefined,
+              filter: 'blur(40px)',
+            }}
+          />
+        ))}
 
-        <motion.div 
-          initial={{ opacity: 0, y: 50, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.6, type: 'spring', bounce: 0.4 }}
-          className="bg-white rounded-3xl p-8 sm:p-12 shadow-2xl shadow-brand-hotpink/10 text-center max-w-lg w-full relative z-10 border border-brand-pink/20"
+        <motion.div
+          initial={{ opacity: 0, scale: 0.7, y: 60 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          transition={{ duration: 0.7, type: 'spring', bounce: 0.45 }}
+          className="bg-white rounded-3xl p-8 sm:p-12 shadow-2xl shadow-brand-hotpink/20 text-center max-w-md w-full relative z-10 border border-brand-pink/30 overflow-hidden"
         >
-          <motion.div 
-            initial={{ scale: 0 }}
-            animate={{ scale: 1, rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-            className="w-24 h-24 bg-gradient-to-br from-brand-darkred to-brand-hotpink rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-brand-hotpink/30"
+          {/* Top ribbon */}
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-brand-darkred via-brand-hotpink to-brand-darkred" />
+
+          {/* Animated icon */}
+          <motion.div
+            initial={{ scale: 0, rotate: -30 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ delay: 0.3, duration: 0.6, type: 'spring', bounce: 0.5 }}
+            className="w-28 h-28 bg-gradient-to-br from-brand-darkred to-brand-hotpink rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl shadow-brand-hotpink/40 relative"
           >
-            <PartyPopper className="w-12 h-12 text-white" />
+            <PartyPopper className="w-14 h-14 text-white" />
+            {/* Sparkle dots */}
+            {[...Array(6)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: [0, 1, 0], opacity: [0, 1, 0] }}
+                transition={{ delay: 0.6 + i * 0.1, duration: 0.8, repeat: Infinity, repeatDelay: 2 }}
+                className="absolute w-3 h-3 bg-yellow-300 rounded-full"
+                style={{
+                  top: `${20 + Math.sin(i * 60 * Math.PI / 180) * 50}%`,
+                  left: `${50 + Math.cos(i * 60 * Math.PI / 180) * 60}%`,
+                }}
+              />
+            ))}
           </motion.div>
 
-          <h2 className="text-3xl font-black text-brand-darkred mb-4" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : "'Playfair Display', serif" }}>
-            {language === 'AR' ? 'تهانينا! تم استلام طلبك بنجاح' : 'Order Received Successfully!'}
-          </h2>
-          
-          <p className="text-gray-600 font-medium mb-8 text-lg" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-            {language === 'AR' 
-              ? 'نحن سعيدون جداً باختيارك لنا. سوف يتم الاتصال بك قريباً لتأكيد الطلب وترتيب التوصيل.' 
-              : 'We are so happy you chose us. You will be contacted soon to confirm your order and arrange delivery.'}
-          </p>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+            className="text-2xl sm:text-3xl font-black text-brand-darkred mb-3"
+            style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : "'Playfair Display', serif" }}
+          >
+            {language === 'AR' ? '🎉 تم استلام طلبك!' : '🎉 Order Received!'}
+          </motion.h2>
 
-          <div className="bg-brand-pinkishwhite/50 rounded-2xl p-5 mb-8 border border-brand-pink/20">
-            <h3 className="font-bold text-brand-darkred mb-2" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-              {language === 'AR' ? 'رقم طلبك' : 'Order Number'}
-            </h3>
-            <p className="text-2xl font-black text-gray-800 tracking-widest">
-              #{Math.floor(Math.random() * 90000) + 10000}
-            </p>
-          </div>
-
-          <motion.button 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => router.push('/')}
-            className="w-full bg-brand-darkred text-white py-4 font-bold rounded-xl shadow-md hover:bg-[#880e4f] transition-colors text-base"
+          <motion.p
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.65 }}
+            className="text-gray-500 font-medium mb-6 text-sm leading-relaxed"
             style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}
           >
-            {language === 'AR' ? 'العودة للتسوق' : 'Continue Shopping'}
+            {language === 'AR'
+              ? 'شكراً لك ❤️ سيتم التواصل معك قريباً لتأكيد الطلب وترتيب التوصيل.'
+              : 'Thank you ❤️ We will contact you soon to confirm your order and arrange delivery.'}
+          </motion.p>
+
+          {/* Order number box */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.8 }}
+            className="bg-gradient-to-r from-brand-pinkishwhite to-white rounded-2xl p-4 mb-6 border border-brand-pink/30"
+          >
+            <p className="text-xs font-bold text-gray-400 mb-1 uppercase tracking-widest">
+              {language === 'AR' ? 'رقم طلبك' : 'Order Number'}
+            </p>
+            <p className="text-3xl font-black text-brand-darkred tracking-widest">
+              #{Math.floor(Math.random() * 90000) + 10000}
+            </p>
+          </motion.div>
+
+          {/* Features */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="flex justify-center gap-4 mb-8 text-xs text-gray-500 font-medium"
+          >
+            {[
+              { icon: '📦', label: language === 'AR' ? 'تغليف مميز' : 'Premium packing' },
+              { icon: '🚚', label: language === 'AR' ? 'توصيل سريع' : 'Fast delivery' },
+              { icon: '💰', label: language === 'AR' ? 'دفع عند الاستلام' : 'Cash on delivery' },
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center gap-1">
+                <span className="text-xl">{item.icon}</span>
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </motion.div>
+
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => router.push('/')}
+            className="w-full bg-gradient-to-r from-brand-darkred to-brand-hotpink text-white py-4 font-black rounded-2xl shadow-lg shadow-brand-hotpink/30 hover:opacity-95 transition-all text-sm"
+            style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}
+          >
+            {language === 'AR' ? '🛍️ مواصلة التسوق' : '🛍️ Continue Shopping'}
           </motion.button>
         </motion.div>
       </div>
     );
   }
 
+  // ─── CHECKOUT FORM ─────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-[#fdfafb]">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 max-w-7xl">
-        
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-12 max-w-5xl">
+
         {/* Back button */}
-        <motion.button 
+        <motion.button
           initial={{ opacity: 0, x: isRTL ? 20 : -20 }}
           animate={{ opacity: 1, x: 0 }}
           onClick={() => router.back()}
-          className={`flex items-center gap-2 text-gray-400 hover:text-brand-darkred mb-8 transition-colors group ${isRTL ? 'flex-row-reverse' : ''}`}
+          className={`flex items-center gap-2 text-gray-400 hover:text-brand-darkred mb-6 transition-colors group ${isRTL ? 'flex-row-reverse' : ''}`}
         >
-          {isRTL ? <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" /> : <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />}
+          {isRTL ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           <span className="font-medium text-sm" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-            {language === 'AR' ? 'العودة للسلة' : 'Back to Cart'}
+            {language === 'AR' ? 'العودة' : 'Back'}
           </span>
         </motion.button>
 
-        <div className={`flex flex-col lg:flex-row gap-8 lg:gap-12 ${isRTL ? 'lg:flex-row-reverse' : ''}`}>
-          
-          {/* Form Section */}
-          <motion.div 
+        <div className={`flex flex-col lg:flex-row gap-6 lg:gap-10 ${isRTL ? 'lg:flex-row-reverse' : ''}`}>
+
+          {/* ── LEFT: FORM ── */}
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full lg:w-3/5 order-2 lg:order-1 space-y-8"
+            transition={{ duration: 0.4 }}
+            className="w-full lg:w-3/5 space-y-5 order-1"
           >
-            <h1 className="text-3xl lg:text-4xl font-black text-brand-darkred mb-2" 
-              style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : "'Playfair Display', serif" }}>
-              {language === 'AR' ? 'إتمام الطلب' : 'Checkout'}
-            </h1>
-            <p className="text-gray-500 mb-8 font-medium" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-              {language === 'AR' ? 'الرجاء إدخال بياناتك بعناية لضمان وصول طلبك بسرعة.' : 'Please enter your details carefully to ensure fast delivery.'}
-            </p>
-
-            <div className="space-y-6">
-              {/* Contact Details */}
-              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] border border-brand-pink/10">
-                <h2 className="text-lg font-bold text-brand-darkred mb-6 flex items-center gap-3" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                  <span className="w-8 h-8 bg-brand-pinkishwhite text-brand-darkred rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">1</span>
-                  {language === 'AR' ? 'المعلومات الشخصية' : 'Personal Info'}
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div>
-                    <label className={`block text-sm font-bold text-gray-600 mb-2 ${isRTL ? 'text-right' : ''}`} style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'الاسم الأول' : 'First Name'}
-                    </label>
-                    <input type="text" className={inputClass} dir={isRTL ? 'rtl' : 'ltr'} />
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-bold text-gray-600 mb-2 ${isRTL ? 'text-right' : ''}`} style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'اللقب' : 'Last Name'}
-                    </label>
-                    <input type="text" className={inputClass} dir={isRTL ? 'rtl' : 'ltr'} />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className={`block text-sm font-bold text-gray-600 mb-2 ${isRTL ? 'text-right' : ''}`} style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'رقم الهاتف' : 'Phone Number'}
-                    </label>
-                    <input type="tel" className={inputClass} dir="ltr" placeholder="05XX XXX XXX" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Delivery Address */}
-              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] border border-brand-pink/10">
-                <h2 className="text-lg font-bold text-brand-darkred mb-6 flex items-center gap-3" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                  <span className="w-8 h-8 bg-brand-pinkishwhite text-brand-darkred rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">2</span>
-                  {language === 'AR' ? 'التوصيل والعنوان' : 'Delivery Address'}
-                </h2>
-
-                {/* Delivery Type */}
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <button
-                    onClick={() => setDeliveryType('home')}
-                    className={`relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${deliveryType === 'home' ? 'border-brand-darkred bg-brand-pinkishwhite/30' : 'border-gray-100 hover:border-brand-pink'}`}
-                  >
-                    <Truck className={`w-8 h-8 ${deliveryType === 'home' ? 'text-brand-darkred' : 'text-gray-400'}`} />
-                    <span className={`font-bold ${deliveryType === 'home' ? 'text-brand-darkred' : 'text-gray-500'}`} style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'توصيل للمنزل' : 'Home Delivery'}
-                    </span>
-                    {deliveryType === 'home' && <CheckCircle2 className="w-5 h-5 text-brand-darkred absolute top-3 right-3" />}
-                  </button>
-                  <button
-                    onClick={() => setDeliveryType('desk')}
-                    className={`relative flex flex-col items-center justify-center gap-3 p-5 rounded-2xl border-2 transition-all ${deliveryType === 'desk' ? 'border-brand-darkred bg-brand-pinkishwhite/30' : 'border-gray-100 hover:border-brand-pink'}`}
-                  >
-                    <Store className={`w-8 h-8 ${deliveryType === 'desk' ? 'text-brand-darkred' : 'text-gray-400'}`} />
-                    <span className={`font-bold ${deliveryType === 'desk' ? 'text-brand-darkred' : 'text-gray-500'}`} style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'توصيل للمكتب (Stop Desk)' : 'Stop Desk'}
-                    </span>
-                    {deliveryType === 'desk' && <CheckCircle2 className="w-5 h-5 text-brand-darkred absolute top-3 right-3" />}
-                  </button>
-                </div>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className={`block text-sm font-bold text-gray-600 mb-2 ${isRTL ? 'text-right' : ''}`} style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'الولاية' : 'Province'}
-                    </label>
-                    <select className={`${inputClass} appearance-none cursor-pointer bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23b0bec5%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat ${isRTL ? 'bg-[position:1rem_center]' : 'bg-[position:calc(100%-1rem)_center]'} bg-[length:0.7rem]`}>
-                      <option value="">{language === 'AR' ? 'اختر الولاية' : 'Select Province'}</option>
-                      {algerianWilayas.map((w, i) => <option key={i} value={w}>{w}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className={`block text-sm font-bold text-gray-600 mb-2 ${isRTL ? 'text-right' : ''}`} style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'العنوان التفصيلي / البلدية' : 'Full Address / Commune'}
-                    </label>
-                    <input type="text" placeholder={language === 'AR' ? 'اكتب عنوانك بالتفصيل (البلدية، الشارع، رقم المنزل...)' : 'Enter detailed address...'} className={inputClass} dir={isRTL ? 'rtl' : 'ltr'} />
-                  </div>
-                </div>
-
-                {/* Shipping Note */}
-                <div className="mt-6 bg-blue-50/50 rounded-2xl p-4 flex gap-4 items-start border border-blue-100">
-                  <div className="bg-blue-100 p-2 rounded-full flex-shrink-0 mt-0.5">
-                    <HeartHandshake className="w-5 h-5 text-blue-600" />
-                  </div>
-                  <div className={isRTL ? 'text-right' : ''}>
-                    <h4 className="text-sm font-bold text-blue-900 mb-1" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'ملاحظة حول أسعار الشحن' : 'Shipping Note'}
-                    </h4>
-                    <p className="text-xs text-blue-700/80 leading-relaxed font-medium" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' 
-                        ? 'نود التوضيح أن أسعار الشحن ليست هامش ربح لنا. نحن نحرص دائماً على التعاقد مع أفضل شركات التوصيل لتوفير أرخص وأسرع خدمة لضمان وصول طلبك بأمان وفي أبهى حلة.'
-                        : 'Please note that shipping prices are not our profit margin. We always contract with the best delivery companies to provide the cheapest and fastest service.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Payment Method */}
-              <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-[0_2px_20px_rgba(0,0,0,0.03)] border border-brand-pink/10">
-                <h2 className="text-lg font-bold text-brand-darkred mb-6 flex items-center gap-3" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                  <span className="w-8 h-8 bg-brand-pinkishwhite text-brand-darkred rounded-full flex items-center justify-center text-sm font-black flex-shrink-0">3</span>
-                  {language === 'AR' ? 'طريقة الدفع' : 'Payment Method'}
-                </h2>
-
-                <div className={`flex items-center gap-4 p-5 rounded-2xl border-2 border-brand-darkred bg-brand-pinkishwhite/30 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <div className="w-12 h-12 rounded-full bg-brand-darkred flex items-center justify-center flex-shrink-0 shadow-inner">
-                    <Package className="w-6 h-6 text-white" />
-                  </div>
-                  <div className={isRTL ? 'text-right' : ''}>
-                    <p className="font-bold text-brand-darkred text-base" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'الدفع عند الاستلام فقط' : 'Cash on Delivery ONLY'}
-                    </p>
-                    <p className="text-sm text-brand-darkred/70 mt-1 font-medium" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                      {language === 'AR' ? 'لن تدفعي أي شيء حتى يصلك الطلب لباب منزلك.' : 'You will not pay anything until you receive your order.'}
-                    </p>
-                  </div>
-                  <CheckCircle2 className={`w-6 h-6 text-brand-darkred ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
-                </div>
-              </div>
-
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-black text-brand-darkred"
+                style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : "'Playfair Display', serif" }}>
+                {language === 'AR' ? 'إتمام الطلب' : 'Checkout'}
+              </h1>
+              <p className="text-gray-400 text-sm mt-1" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                {language === 'AR' ? 'أدخل بياناتك لضمان وصول طلبك بسرعة' : 'Enter your details to ensure fast delivery'}
+              </p>
             </div>
-          </motion.div>
 
-          {/* Order Summary */}
-          <motion.div 
-            initial={{ opacity: 0, x: isRTL ? -20 : 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="w-full lg:w-2/5 order-1 lg:order-2"
-          >
-            <div className="bg-white rounded-3xl p-6 sm:p-8 sticky top-28 shadow-[0_10px_40px_rgba(0,0,0,0.06)] border border-brand-pink/20 overflow-hidden">
-              <div className="absolute top-0 start-0 w-full h-1.5 bg-gradient-to-r from-brand-darkred to-brand-hotpink" />
-              
-              <h2 className="text-xl font-black text-gray-900 mb-6 pt-2" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : "'Playfair Display', serif" }}>
-                {language === 'AR' ? 'ملخص الطلب' : 'Order Summary'}
+            {/* 1. Personal Info */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+              <h2 className="text-base font-black text-brand-darkred mb-4 flex items-center gap-2"
+                style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                <span className="w-7 h-7 bg-brand-pinkishwhite text-brand-darkred rounded-full flex items-center justify-center text-xs font-black">1</span>
+                {language === 'AR' ? 'المعلومات الشخصية' : 'Personal Info'}
               </h2>
-              
-              {/* Cart Items in Summary */}
-              {items.length > 0 ? (
-                <div className="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                  {items.map((item, idx) => {
-                    const product = products.find(p => p.id === item.productId);
-                    if (!product) return null;
-                    return (
-                      <div key={idx} className={`flex items-center gap-4 p-3 rounded-2xl bg-white hover:bg-gray-50 transition-colors border border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                        <div className="relative">
-                          <img src={product.image} alt={product.name} className="w-20 h-28 object-cover rounded-xl flex-shrink-0 shadow-sm" />
-                        </div>
-                        <div className={`flex-1 min-w-0 flex flex-col justify-between py-1 h-full ${isRTL ? 'text-right' : 'text-left'}`}>
-                          <div>
-                            <p className="text-sm font-bold text-gray-800 line-clamp-2" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>{product.name}</p>
-                            <p className="text-xs text-gray-500 mt-1 font-medium bg-gray-100 inline-block px-2 py-0.5 rounded-md">{item.selectedSize} · {item.selectedColor}</p>
-                          </div>
-                          <div className={`flex items-center gap-2 mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                            <button 
-                              onClick={() => updateQuantity(product.id, Math.max(1, item.quantity - 1))}
-                              className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
-                            <button 
-                              onClick={() => updateQuantity(product.id, item.quantity + 1)}
-                              className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          </div>
-                        </div>
-                        <div className="flex flex-col items-end justify-between py-1 h-full h-28">
-                          <button 
-                            onClick={() => removeFromCart(product.id)}
-                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                          <span className="font-black text-sm text-brand-darkred flex-shrink-0">{((product.price * item.quantity)*150).toFixed(0)} DZD</span>
-                        </div>
-                      </div>
-                    );
-                  })}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className={`block text-xs font-bold text-gray-500 mb-1.5 ${isRTL ? 'text-right' : ''}`}>
+                    {language === 'AR' ? 'الاسم الأول' : 'First Name'} <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={form.firstName}
+                    onChange={e => { setForm(f => ({ ...f, firstName: e.target.value })); setErrors(er => ({ ...er, firstName: '' })); }}
+                    className={inputClass('firstName')}
+                    placeholder={language === 'AR' ? 'أدخل اسمك' : 'Your first name'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                  />
+                  {errors.firstName && <p className="text-red-400 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.firstName}</p>}
                 </div>
-              ) : (
-                <div className="text-center py-8 text-gray-400 font-medium" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                  {language === 'AR' ? 'السلة فارغة' : 'Cart is empty'}
+                <div>
+                  <label className={`block text-xs font-bold text-gray-500 mb-1.5 ${isRTL ? 'text-right' : ''}`}>
+                    {language === 'AR' ? 'اللقب' : 'Last Name'} <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={form.lastName}
+                    onChange={e => { setForm(f => ({ ...f, lastName: e.target.value })); setErrors(er => ({ ...er, lastName: '' })); }}
+                    className={inputClass('lastName')}
+                    placeholder={language === 'AR' ? 'أدخل لقبك' : 'Your last name'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                  />
+                  {errors.lastName && <p className="text-red-400 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.lastName}</p>}
                 </div>
-              )}
+                <div className="col-span-2">
+                  <label className={`block text-xs font-bold text-gray-500 mb-1.5 ${isRTL ? 'text-right' : ''}`}>
+                    {language === 'AR' ? 'رقم الهاتف' : 'Phone Number'} <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={form.phone}
+                    onChange={e => { setForm(f => ({ ...f, phone: e.target.value })); setErrors(er => ({ ...er, phone: '' })); }}
+                    className={inputClass('phone')}
+                    placeholder="05XX XXX XXX"
+                    dir="ltr"
+                  />
+                  {errors.phone && <p className="text-red-400 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.phone}</p>}
+                </div>
+              </div>
+            </div>
 
-              {/* Totals */}
-              <div className="bg-gray-50 rounded-2xl p-5 space-y-4">
-                <div className={`flex justify-between items-center text-sm font-bold text-gray-500 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                    {language === 'AR' ? `المنتجات (${cartCount})` : `Items (${cartCount})`}
-                  </span>
-                  <span className="text-gray-700">{(cartTotal*150).toFixed(0)} DZD</span>
+            {/* 2. Delivery */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+              <h2 className="text-base font-black text-brand-darkred mb-4 flex items-center gap-2"
+                style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                <span className="w-7 h-7 bg-brand-pinkishwhite text-brand-darkred rounded-full flex items-center justify-center text-xs font-black">2</span>
+                {language === 'AR' ? 'عنوان التوصيل' : 'Delivery Address'}
+              </h2>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {[
+                  { type: 'home' as const, icon: Truck, label: language === 'AR' ? 'توصيل للمنزل' : 'Home Delivery', price: '800' },
+                  { type: 'desk' as const, icon: Store, label: language === 'AR' ? 'Stop Desk' : 'Stop Desk', price: '500' },
+                ].map(opt => (
+                  <button
+                    key={opt.type}
+                    onClick={() => setDeliveryType(opt.type)}
+                    className={`relative flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border-2 transition-all ${deliveryType === opt.type ? 'border-brand-darkred bg-brand-pinkishwhite/40' : 'border-gray-100 hover:border-brand-pink/50'}`}
+                  >
+                    <opt.icon className={`w-6 h-6 ${deliveryType === opt.type ? 'text-brand-darkred' : 'text-gray-400'}`} />
+                    <span className={`text-xs font-bold ${deliveryType === opt.type ? 'text-brand-darkred' : 'text-gray-500'}`}
+                      style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>{opt.label}</span>
+                    <span className={`text-xs ${deliveryType === opt.type ? 'text-brand-hotpink' : 'text-gray-400'}`}>{opt.price} DZD</span>
+                    {deliveryType === opt.type && <CheckCircle2 className="w-4 h-4 text-brand-darkred absolute top-2 right-2" />}
+                  </button>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className={`block text-xs font-bold text-gray-500 mb-1.5 ${isRTL ? 'text-right' : ''}`}>
+                    {language === 'AR' ? 'الولاية' : 'Province'} <span className="text-red-400">*</span>
+                  </label>
+                  <select
+                    value={form.wilaya}
+                    onChange={e => { setForm(f => ({ ...f, wilaya: e.target.value })); setErrors(er => ({ ...er, wilaya: '' })); }}
+                    className={inputClass('wilaya') + ' cursor-pointer'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                  >
+                    <option value="">{language === 'AR' ? '-- اختر الولاية --' : '-- Select Province --'}</option>
+                    {algerianWilayas.map((w, i) => <option key={i} value={w}>{w}</option>)}
+                  </select>
+                  {errors.wilaya && <p className="text-red-400 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.wilaya}</p>}
                 </div>
-                <div className={`flex justify-between items-center text-sm font-bold text-gray-500 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                    {language === 'AR' ? 'الشحن والتوصيل' : 'Shipping'}
-                  </span>
-                  <span className="text-gray-700">{cartCount > 0 ? shipping : 0} DZD</span>
-                </div>
-                
-                <div className={`flex justify-between items-center border-t border-gray-200 pt-4 mt-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                  <span className="font-black text-gray-900 text-lg" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
-                    {language === 'AR' ? 'المجموع النهائي' : 'Total'}
-                  </span>
-                  <span className="text-3xl font-black text-brand-darkred">
-                    {((cartTotal*150) + (cartCount > 0 ? shipping : 0)).toFixed(0)} DZD
-                  </span>
+                <div>
+                  <label className={`block text-xs font-bold text-gray-500 mb-1.5 ${isRTL ? 'text-right' : ''}`}>
+                    {language === 'AR' ? 'العنوان التفصيلي' : 'Full Address'} <span className="text-red-400">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={form.address}
+                    onChange={e => { setForm(f => ({ ...f, address: e.target.value })); setErrors(er => ({ ...er, address: '' })); }}
+                    className={inputClass('address')}
+                    placeholder={language === 'AR' ? 'البلدية، الشارع، رقم المنزل...' : 'Street, building, commune...'}
+                    dir={isRTL ? 'rtl' : 'ltr'}
+                  />
+                  {errors.address && <p className="text-red-400 text-xs mt-1 flex items-center gap-1"><AlertCircle className="w-3 h-3" />{errors.address}</p>}
                 </div>
               </div>
 
-              {/* Confirm Button */}
-              <motion.button 
-                whileTap={{ scale: 0.98 }}
-                whileHover={{ scale: 1.01 }}
-                onClick={handleSubmit}
-                disabled={cartCount === 0 || isSubmitting}
-                className={`w-full mt-6 py-5 font-black rounded-2xl shadow-[0_10px_20px_rgba(160,18,72,0.2)] text-base flex items-center justify-center gap-3 transition-all relative overflow-hidden ${cartCount === 0 ? 'bg-gray-300 text-white cursor-not-allowed shadow-none' : 'bg-gradient-to-r from-brand-darkred to-brand-hotpink text-white hover:opacity-95'}`}
-                style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}
-              >
-                {isSubmitting ? (
-                  <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  <>
-                    <PartyPopper className="w-5 h-5" />
-                    {language === 'AR' ? 'إتمام الطلب بنجاح' : 'Confirm Order'}
-                  </>
-                )}
-              </motion.button>
+              <div className="mt-4 bg-blue-50 rounded-xl p-3 flex gap-3 items-start border border-blue-100">
+                <HeartHandshake className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-blue-600 leading-relaxed font-medium"
+                  style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                  {language === 'AR'
+                    ? 'أسعار الشحن ليست ربحاً لنا. نتعاقد مع أفضل شركات التوصيل لأسرع وأرخص خدمة.'
+                    : 'Shipping prices are not our profit. We partner with the best couriers for the fastest and cheapest service.'}
+                </p>
+              </div>
+            </div>
+
+            {/* 3. Payment */}
+            <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-gray-100">
+              <h2 className="text-base font-black text-brand-darkred mb-3 flex items-center gap-2"
+                style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                <span className="w-7 h-7 bg-brand-pinkishwhite text-brand-darkred rounded-full flex items-center justify-center text-xs font-black">3</span>
+                {language === 'AR' ? 'طريقة الدفع' : 'Payment Method'}
+              </h2>
+              <div className={`flex items-center gap-4 p-4 rounded-2xl border-2 border-brand-darkred bg-brand-pinkishwhite/30 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className="w-10 h-10 rounded-full bg-brand-darkred flex items-center justify-center flex-shrink-0">
+                  <Package className="w-5 h-5 text-white" />
+                </div>
+                <div className={isRTL ? 'text-right' : ''}>
+                  <p className="font-black text-brand-darkred text-sm" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                    {language === 'AR' ? 'الدفع عند الاستلام فقط' : 'Cash on Delivery ONLY'}
+                  </p>
+                  <p className="text-xs text-brand-darkred/60 mt-0.5 font-medium" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                    {language === 'AR' ? 'لن تدفعي شيئاً حتى يصلك طلبك.' : 'You pay nothing until your order arrives.'}
+                  </p>
+                </div>
+                <CheckCircle2 className={`w-5 h-5 text-brand-darkred ${isRTL ? 'mr-auto' : 'ml-auto'}`} />
+              </div>
             </div>
           </motion.div>
+
+          {/* ── RIGHT: ORDER SUMMARY ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="w-full lg:w-2/5 order-2"
+          >
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:sticky lg:top-28">
+              <div className="h-1.5 bg-gradient-to-r from-brand-darkred to-brand-hotpink" />
+              <div className="p-5 sm:p-6">
+                <h2 className="text-lg font-black text-gray-900 mb-4"
+                  style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : "'Playfair Display', serif" }}>
+                  {language === 'AR' ? 'ملخص الطلب' : 'Order Summary'}
+                </h2>
+
+                {/* Items */}
+                {items.length > 0 ? (
+                  <div className="space-y-3 mb-5 max-h-72 overflow-y-auto">
+                    {items.map((item, idx) => {
+                      const product = products.find(p => p.id === item.productId);
+                      if (!product) return null;
+                      return (
+                        <div key={idx} className={`flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-16 h-20 object-cover rounded-lg flex-shrink-0 shadow-sm"
+                          />
+                          <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : ''}`}>
+                            <p className="text-xs font-bold text-gray-800 line-clamp-2 leading-tight mb-1">{product.name}</p>
+                            <p className="text-[10px] text-gray-400 bg-gray-200 inline-block px-2 py-0.5 rounded-full mb-2">
+                              {item.selectedSize} · {item.selectedColor}
+                            </p>
+                            <div className={`flex items-center gap-2 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                              <button onClick={() => updateQuantity(product.id, Math.max(1, item.quantity - 1))}
+                                className="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100">
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="font-bold text-xs w-4 text-center">{item.quantity}</span>
+                              <button onClick={() => updateQuantity(product.id, item.quantity + 1)}
+                                className="w-6 h-6 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-100">
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-2">
+                            <button onClick={() => removeFromCart(product.id)}
+                              className="p-1 text-gray-300 hover:text-red-400 transition-colors">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                            <span className="font-black text-xs text-brand-darkred whitespace-nowrap">
+                              {(product.price * item.quantity * 150).toFixed(0)} DZD
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-400">
+                    <p className="text-sm font-medium" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                      {language === 'AR' ? 'السلة فارغة' : 'Cart is empty'}
+                    </p>
+                  </div>
+                )}
+
+                {/* Totals */}
+                <div className="bg-gray-50 rounded-xl p-4 space-y-2.5 mb-4">
+                  <div className={`flex justify-between text-xs font-semibold text-gray-500 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <span style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                      {language === 'AR' ? `المنتجات (${cartCount})` : `Items (${cartCount})`}
+                    </span>
+                    <span>{(cartTotal * 150).toFixed(0)} DZD</span>
+                  </div>
+                  <div className={`flex justify-between text-xs font-semibold text-gray-500 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <span style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                      {language === 'AR' ? 'الشحن' : 'Shipping'}
+                    </span>
+                    <span>{cartCount > 0 ? shipping : 0} DZD</span>
+                  </div>
+                  <div className={`flex justify-between items-center border-t border-gray-200 pt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                    <span className="font-black text-gray-900 text-sm" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                      {language === 'AR' ? 'المجموع' : 'Total'}
+                    </span>
+                    <span className="text-2xl font-black text-brand-darkred">
+                      {((cartTotal * 150) + (cartCount > 0 ? shipping : 0)).toFixed(0)} DZD
+                    </span>
+                  </div>
+                </div>
+
+                {/* CONFIRM BUTTON - always at bottom of summary */}
+                <motion.button
+                  whileTap={{ scale: 0.97 }}
+                  whileHover={{ scale: 1.01 }}
+                  onClick={handleSubmit}
+                  disabled={cartCount === 0 || isSubmitting}
+                  className={`w-full py-4 font-black rounded-2xl text-sm flex items-center justify-center gap-2 transition-all shadow-lg ${
+                    cartCount === 0
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+                      : 'bg-gradient-to-r from-brand-darkred to-brand-hotpink text-white shadow-brand-hotpink/30 hover:opacity-95'
+                  }`}
+                  style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}
+                >
+                  {isSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <PartyPopper className="w-5 h-5" />
+                      {language === 'AR' ? 'تأكيد الطلب' : 'Confirm Order'}
+                    </>
+                  )}
+                </motion.button>
+
+                {cartCount === 0 && (
+                  <p className="text-center text-xs text-gray-400 mt-2 font-medium"
+                    style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>
+                    {language === 'AR' ? 'أضف منتجات للسلة أولاً' : 'Add items to your cart first'}
+                  </p>
+                )}
+              </div>
+            </div>
+          </motion.div>
+
         </div>
       </div>
     </div>
