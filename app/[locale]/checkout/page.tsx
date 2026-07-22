@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Package, Truck, CheckCircle2, Store, HeartHandshake, PartyPopper, Trash2, Plus, Minus, AlertCircle, Sparkles, Heart, Star } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 import { products } from '@/lib/data';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 
 const algerianWilayas = [
@@ -64,7 +64,17 @@ export default function CheckoutPage() {
       setIsSuccess(true);
       clearCart();
       fireConfetti();
+      playSuccessSound();
     }, 1500);
+  };
+
+  const playSuccessSound = () => {
+    try {
+      // Using a generic success chime sound effect
+      const audio = new Audio('https://cdn.pixabay.com/download/audio/2021/08/04/audio_bb630cc098.mp3?filename=success-1-6297.mp3');
+      audio.volume = 0.6;
+      audio.play().catch(e => console.log('Audio error:', e));
+    } catch(e) {}
   };
 
   const fireConfetti = () => {
