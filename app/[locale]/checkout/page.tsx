@@ -58,13 +58,16 @@ export default function CheckoutPage() {
   const handleSubmit = () => {
     if (!validate()) return;
     if (cartCount === 0) return;
+    
+    // Play sound immediately on user interaction to bypass browser autoplay policies
+    playSuccessSound();
+    
     setIsSubmitting(true);
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
       clearCart();
       fireConfetti();
-      playSuccessSound();
     }, 1500);
   };
 

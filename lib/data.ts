@@ -4,7 +4,7 @@ export const products = [
     name: "Oversized Graphic Printed T-Shirt",
     price: 15.00,
     originalPrice: 30.00,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: "50% OFF"
   },
   {
@@ -12,7 +12,7 @@ export const products = [
     name: "Wide Leg Tailored Trousers",
     price: 22.00,
     originalPrice: 44.00,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: "NEW IN"
   },
   {
@@ -20,7 +20,7 @@ export const products = [
     name: "Chunky Chelsea Boots",
     price: 35.00,
     originalPrice: null,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: null
   },
   {
@@ -28,7 +28,7 @@ export const products = [
     name: "Ribbed Knit Midi Dress",
     price: 18.00,
     originalPrice: 36.00,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: "50% OFF"
   },
   {
@@ -36,7 +36,7 @@ export const products = [
     name: "Faux Leather Moto Jacket",
     price: 45.00,
     originalPrice: 90.00,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: "TRENDING"
   },
   {
@@ -44,7 +44,7 @@ export const products = [
     name: "Satin Slip Skirt",
     price: 20.00,
     originalPrice: 28.00,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: null
   },
   {
@@ -52,7 +52,7 @@ export const products = [
     name: "Basic Crop Top",
     price: 8.00,
     originalPrice: 16.00,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: "50% OFF"
   },
   {
@@ -60,7 +60,7 @@ export const products = [
     name: "Distressed Mom Jeans",
     price: 28.00,
     originalPrice: 40.00,
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800",
+    image: "/placeholder.jpg",
     badge: null
   }
 ];
@@ -69,21 +69,21 @@ export const categories = [
   {
     id: 1,
     name: "DRESSES",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800"
+    image: "/placeholder.jpg"
   },
   {
     id: 2,
     name: "TOPS",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800"
+    image: "/placeholder.jpg"
   },
   {
     id: 3,
     name: "SHOES",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800"
+    image: "/placeholder.jpg"
   },
   {
     id: 4,
     name: "ACCESSORIES",
-    image: "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?auto=format&fit=crop&q=80&w=800"
+    image: "/placeholder.jpg"
   }
 ];
