@@ -39,7 +39,7 @@ export default function Hero() {
 
   return (
     <>
-      <div className="relative w-full h-[45vh] sm:h-[60vh] lg:h-[85vh] bg-brand-pinkishwhite overflow-hidden group">
+      <div className="relative w-full h-[65vh] sm:h-[70vh] lg:h-[85vh] bg-brand-pinkishwhite overflow-hidden group">
         <motion.div
           drag="x"
           dragConstraints={{ left: 0, right: 0 }}
@@ -55,7 +55,7 @@ export default function Hero() {
               style={{
                 backgroundImage: `url("${src}")`,
                 backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundPosition: "top center",
               }}
               animate={{
                 scale: imgIndex === idx ? 1 : 0.95,
@@ -82,7 +82,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-white text-6xl md:text-8xl lg:text-[9rem] font-black tracking-tighter leading-[0.85] drop-shadow-lg mb-2" 
+            className="text-white text-5xl md:text-7xl lg:text-[8rem] font-black tracking-tighter leading-[0.85] drop-shadow-lg mb-2" 
             style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             {language === 'AR' ? '60% خصم' : '60% OFF'}
@@ -91,7 +91,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-white text-4xl md:text-6xl lg:text-7xl tracking-tight drop-shadow-md mt-4"
+            className="text-white text-3xl md:text-5xl lg:text-7xl tracking-tight drop-shadow-md mt-4"
             style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic' }}
           >
             {language === 'AR' ? 'أزياء الصيف الرائعة' : 'summer styles'}

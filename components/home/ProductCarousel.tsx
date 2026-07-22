@@ -35,7 +35,7 @@ export default function ProductCarousel({
           <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight mb-2 uppercase">{title}</h3>
         </div>
         
-        <div className={`flex flex-wrap items-center gap-4 lg:gap-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
+        <div className={`hidden sm:flex flex-wrap items-center gap-4 lg:gap-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
           {trendingLinks.map((link, idx) => (
             <Link 
               key={link} 
@@ -69,7 +69,7 @@ export default function ProductCarousel({
               show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
             }}
             key={`${product.id}-${idx}`} 
-            className="min-w-[60vw] sm:min-w-[40vw] md:min-w-[30vw] lg:min-w-[22vw] flex-1 snap-start group relative flex flex-col"
+            className="min-w-[46vw] sm:min-w-[40vw] md:min-w-[30vw] lg:min-w-[22vw] flex-1 snap-start group relative flex flex-col"
           >
             <Link 
               href="/shop"

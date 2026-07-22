@@ -3,7 +3,7 @@
 import { useLocale } from 'next-intl';
 import { useRouter, Link } from '@/lib/i18n/routing';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, ChevronLeft, MapPin, Package, Truck, CheckCircle2, Store, HeartHandshake, PartyPopper } from 'lucide-react';
+import { ChevronRight, ChevronLeft, MapPin, Package, Truck, CheckCircle2, Store, HeartHandshake, PartyPopper, Trash2, Plus, Minus } from 'lucide-react';
 import { useCart } from '@/components/CartProvider';
 import { products } from '@/lib/data';
 import { useState, useEffect } from 'react';
@@ -24,7 +24,7 @@ export default function CheckoutPage() {
   const language = useLocale().toUpperCase();
   const isRTL = language === 'AR';
   const router = useRouter();
-  const { items, cartTotal, cartCount, clearCart } = useCart();
+  const { items, cartTotal, cartCount, clearCart, updateQuantity, removeFromCart } = useCart();
   
   const [deliveryType, setDeliveryType] = useState<'desk' | 'home'>('home');
   const [isSuccess, setIsSuccess] = useState(false);
@@ -310,18 +310,40 @@ export default function CheckoutPage() {
                     const product = products.find(p => p.id === item.productId);
                     if (!product) return null;
                     return (
-                      <div key={idx} className={`flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                      <div key={idx} className={`flex items-center gap-4 p-3 rounded-2xl bg-white hover:bg-gray-50 transition-colors border border-gray-100 ${isRTL ? 'flex-row-reverse' : ''}`}>
                         <div className="relative">
-                          <img src={product.image} alt={product.name} className="w-16 h-20 object-cover rounded-xl flex-shrink-0 shadow-sm" />
-                          <span className="absolute -top-2 -end-2 w-6 h-6 bg-brand-darkred text-white text-xs font-bold flex items-center justify-center rounded-full shadow-md border-2 border-white">
-                            {item.quantity}
-                          </span>
+                          <img src={product.image} alt={product.name} className="w-20 h-28 object-cover rounded-xl flex-shrink-0 shadow-sm" />
                         </div>
-                        <div className={`flex-1 min-w-0 ${isRTL ? 'text-right' : 'text-left'}`}>
-                          <p className="text-sm font-bold text-gray-800 line-clamp-2" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>{product.name}</p>
-                          <p className="text-xs text-gray-500 mt-1 font-medium bg-gray-100 inline-block px-2 py-0.5 rounded-md">{item.selectedSize} · {item.selectedColor}</p>
+                        <div className={`flex-1 min-w-0 flex flex-col justify-between py-1 h-full ${isRTL ? 'text-right' : 'text-left'}`}>
+                          <div>
+                            <p className="text-sm font-bold text-gray-800 line-clamp-2" style={{ fontFamily: isRTL ? "'Cairo', sans-serif" : 'inherit' }}>{product.name}</p>
+                            <p className="text-xs text-gray-500 mt-1 font-medium bg-gray-100 inline-block px-2 py-0.5 rounded-md">{item.selectedSize} · {item.selectedColor}</p>
+                          </div>
+                          <div className={`flex items-center gap-2 mt-3 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                            <button 
+                              onClick={() => updateQuantity(product.id, Math.max(1, item.quantity - 1))}
+                              className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
+                            <button 
+                              onClick={() => updateQuantity(product.id, item.quantity + 1)}
+                              className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition-colors"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
                         </div>
-                        <span className="font-black text-sm text-brand-darkred flex-shrink-0">{((product.price * item.quantity)*150).toFixed(0)} DZD</span>
+                        <div className="flex flex-col items-end justify-between py-1 h-full h-28">
+                          <button 
+                            onClick={() => removeFromCart(product.id)}
+                            className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                          <span className="font-black text-sm text-brand-darkred flex-shrink-0">{((product.price * item.quantity)*150).toFixed(0)} DZD</span>
+                        </div>
                       </div>
                     );
                   })}
